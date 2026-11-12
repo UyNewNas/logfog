@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'extension/**'
+      - 'dist/logfog-extension.zip'
       - 'tests/**'
       - '.github/workflows/extension-smoke.yml'
   workflow_dispatch:
@@ -13,15 +14,22 @@ permissions:
 
 jobs:
   chromium:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Verify the downloadable package
+        run: |
+          node --test tests/rewrite.test.cjs tests/extension.test.cjs
+          python3 -m zipfile -e dist/logfog-extension.zip "$RUNNER_TEMP/logfog-extension"
+          diff -r extension "$RUNNER_TEMP/logfog-extension"
       - name: Install test browser
         run: |
           npm install --prefix "$RUNNER_TEMP/logfog-smoke" --no-audit --no-fund --no-package-lock playwright@1.57.0
           "$RUNNER_TEMP/logfog-smoke/node_modules/.bin/playwright" install --with-deps chromium
       - name: Exercise unpacked extension
+        env:
+          LOGFOG_EXTENSION_DIR: ${{ runner.temp }}/logfog-extension
         run: NODE_PATH="$RUNNER_TEMP/logfog-smoke/node_modules" node tests/browser-smoke.cjs

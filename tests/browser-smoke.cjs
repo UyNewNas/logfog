@@ -5,7 +5,7 @@ const path = require('node:path');
 const { chromium } = require('playwright');
 
 async function run() {
-  const extension = path.resolve(__dirname, '../extension');
+  const extension = process.env.LOGFOG_EXTENSION_DIR || path.resolve(__dirname, '../extension');
   const context = await chromium.launchPersistentContext('', {
     channel: 'chromium',
     headless: true,
@@ -43,7 +43,12 @@ async function run() {
       variants.push(await result.innerText());
     }
     assert.equal(new Set(variants).size, 3);
-    for (const text of variants) assert.match(text, /12/);
+    for (const text of variants) {
+      assert.match(text, /12/);
+      assert.match(text, /2 张待复核/);
+    }
+    await page.locator('#copy').click();
+    await page.getByText('已复制', {exact: true}).waitFor();
 
     await page.close();
     page = await context.newPage();
