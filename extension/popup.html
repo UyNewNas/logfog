@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>LogFog · 工时描述混淆器</title>
+  <link rel="stylesheet" href="popup.css">
+  <script defer src="rewrite.js"></script>
+  <script defer src="popup.js"></script>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 28 28" aria-hidden="true">
+        <path d="M4 9h10l-3 4H4m5 3h11l-3 4H7m10-12h7m-4 5h4"/>
+      </svg>
+      <strong lang="en">LogFog</strong>
+    </div>
+    <h1>工时描述混淆器</h1>
+    <span class="local">本地运行</span>
+  </header>
+  <main>
+    <section aria-labelledby="source-title">
+      <div class="row">
+        <h2 id="source-title"><label for="source">原始记录</label></h2>
+        <button type="button" class="quiet" id="sample">试用样例</button>
+        <button type="button" class="quiet" id="clear" hidden disabled>清空</button>
+      </div>
+      <div class="entry">
+        <textarea id="source" rows="3" placeholder="写下或粘贴今天做了什么…" autofocus></textarea>
+        <span class="count" id="count" aria-hidden="true">0 字</span>
+      </div>
+      <fieldset>
+        <legend>改写风格</legend>
+        <div class="modes">
+          <label><input type="radio" name="style" value="0"><span>清爽直述</span></label>
+          <label><input type="radio" name="style" value="1" checked><span>专业汇报</span></label>
+          <label><input type="radio" name="style" value="2"><span>大厂黑话</span></label>
+        </div>
+      </fieldset>
+      <button type="button" class="primary" id="generate" aria-keyshortcuts="Control+Enter Meta+Enter" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h3c4 0 6 12 11 12h4m-3-3 3 3-3 3M3 18h3c2 0 3-2 4-4m4-5c1-2 2-3 4-3h3m-3-3 3 3-3 3"/></svg>
+        生成描述 <kbd id="shortcut" aria-hidden="true">Ctrl ↵</kbd>
+      </button>
+    </section>
+    <section class="result" aria-labelledby="result-title">
+      <div class="row">
+        <h2 id="result-title">改写结果</h2>
+        <span id="variant" aria-label="当前写法"></span>
+      </div>
+      <p id="result-text" class="empty" tabindex="0" aria-live="polite" aria-atomic="true">改写后的描述会显示在这里。</p>
+      <div class="result-actions">
+        <button type="button" class="swap" id="alternate" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11a8 8 0 1 1 1.5 6M4 5v6h6"/></svg>换个说法
+        </button>
+        <button type="button" class="copy" id="copy" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V4H4v12h4"/></svg>
+          <span id="copy-label" aria-live="polite">复制结果</span>
+        </button>
+      </div>
+    </section>
+    <p role="status" id="notice"></p>
+  </main>
+</body>
+</html>

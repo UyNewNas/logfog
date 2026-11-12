@@ -1,0 +1,27 @@
+name: Chromium extension smoke test
+
+on:
+  push:
+    paths:
+      - 'extension/**'
+      - 'tests/**'
+      - '.github/workflows/extension-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  chromium:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install test browser
+        run: |
+          npm install --prefix "$RUNNER_TEMP/logfog-smoke" --no-audit --no-fund --no-package-lock playwright@1.57.0
+          "$RUNNER_TEMP/logfog-smoke/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Exercise unpacked extension
+        run: NODE_PATH="$RUNNER_TEMP/logfog-smoke/node_modules" node tests/browser-smoke.cjs
